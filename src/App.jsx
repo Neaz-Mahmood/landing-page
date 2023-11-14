@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+import { DonorList, Hero, Navbar } from './components';
+import './App.css';
+import { useState, createContext } from 'react';
+import { rowData } from './donorsData';
+
+export const DonorContext = createContext([]);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [value, setValue] = useState({
+    Alldata: rowData,
+    id: '',
+    name: '',
+    phone: '',
+    blood: '',
+    updateEdit: []
+  });
+
+  const getRecord = (id) => {
+    const donor = value.Alldata.find(d => d.id === id);
+    return donor;
+  }
+
+  const onEdit = (id) => {
+    const tempData = value.Alldata;
+    const index = tempData.indexOf(getRecord(id));
+    const selectedDonor = tempData[index];
+    setValue({
+      ...value,
+      id: selectedDonor['id'],
+      name: selectedDonor['name'],
+      phone: selectedDonor['phone'],
+      blood: selectedDonor['blood']
+    })
+  }
+
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <DonorContext.Provider value={{ value, onEdit}} >
+      <Navbar />
+      <Hero />
+      <DonorList />
+    </ DonorContext.Provider>
   )
 }
 
-export default App
+export default App;
