@@ -1,12 +1,16 @@
 import React from 'react'
-import Home from './Home';
-import { LocationList } from './components';
+import { Hero, LocationList, Header, Footer, Donor, DonorForm } from './components';
 import './App.css';
 
 function App () {
   return (
     <div>
-        <LocationList />
+      <Header />
+      <Hero />
+      <LocationList />
+      <Donor />
+      <DonorForm />
+      <Footer />
     </div>
   )
 }

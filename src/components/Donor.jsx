@@ -1,14 +1,12 @@
 
-import { DonorList, Hero, Navbar } from './components';
+import { DonorList } from '.';
 
 import { useState, createContext, useEffect } from 'react';
-import { rowData } from './donorsData';
-import MockData from '../MOCK_DATA.json';
 import axios from 'axios';
 
 export const DonorContext = createContext([]);
 
-function Home() {
+function Donor() {
   const [value, setValue] = useState({
     Alldata: [],
     id: '',
@@ -24,7 +22,7 @@ function Home() {
 
   const loadDonorsData = async () => {
     return await axios
-                .get("https://donors-list.onrender.com/MockData")
+                .get("https://donors-list.onrender.com/DonorData?_start=0&_end=10")
                 .then((response) => setValue({...value, Alldata: response.data}))
                 .catch((err) => console.log(err));
   }
@@ -109,11 +107,9 @@ function Home() {
 
   return (
     <DonorContext.Provider value={{ value, onEdit, onSave, updateValue, onDelete}} >
-      <Navbar />
-      <Hero />
       <DonorList />
     </ DonorContext.Provider>
   )
 }
 
-export default Home;
+export default Donor;

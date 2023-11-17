@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { DonorContext } from "../Home";
+import { DonorContext } from "./Donor";
 import { Button } from "react-bootstrap";
 import { 
     MDBTable, 
@@ -17,8 +17,9 @@ const DonorList = () => {
 
     
   return (
-    <MDBContainer>
-        <div className="mt-[100px]">
+    <MDBContainer className="my-[100px]">
+        <div className="mt-[100px] flex justify-center">
+        <h3 className="text-center">Donor List</h3>
         <MDBRow>
             <MDBCol size="12">
                 <MDBTable >
