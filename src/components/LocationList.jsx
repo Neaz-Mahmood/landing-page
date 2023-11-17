@@ -13,10 +13,11 @@ import {
 } from 'mdb-react-ui-kit';
 
 const LocationList = () => {
-    const [data, setData] = useState();
+    const [data, setData] = useState([]);
     const [value, setValue] = useState("");
+    const [sortValue, setSortValue] = useState("");
 
-    const sortOptions = ["name, street"];
+    const sortOptions = ["name", "street"];
     
     useEffect(() => {
         loadLocationData();
@@ -42,6 +43,17 @@ const LocationList = () => {
     const handleReset = () => {
         loadLocationData();
     };
+
+    const handleSort = async (e) => {
+        let value = e.target.value;
+        setSortValue(value);
+        return await axios
+            .get(`https://donors-list.onrender.com/LocationData?_sort=${value}&_order=asc`)
+            .then((response) => {
+                setData(response.data);
+            })
+            .catch((err) => console.log(err));
+    }
 
   return (
     <MDBContainer>
@@ -97,8 +109,25 @@ const LocationList = () => {
                 </MDBTable>
             </MDBCol>
         </MDBRow>
-        
     </div>
+    <MDBRow>
+        <MDBCol size="8">
+            <h5>Sort By:</h5>
+            <select
+                style={{ width: "50%", borderRadius: "2px", height: "35px"  }}
+                onChange={handleSort}
+                value={sortValue}
+            >
+                <option>PLease Select  Value</option>
+                {sortOptions.map((item,index) => (
+                    <option value={item} key={index}>
+                        {item}
+                    </option>
+                ))}
+            </select>
+        </MDBCol>
+        <MDBCol size="4">Filter By Status"</MDBCol>
+    </MDBRow>
     </MDBContainer>
    
   )
