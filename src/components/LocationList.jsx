@@ -9,28 +9,53 @@ import {
     MDBRow, 
     MDBCol,
     MDBBtn,
-    MDBBtnGroup    
+    MDBBtnGroup,
+    MDBPagination,
+    MDBPaginationItem,
+    MDBPaginationLink    
 } from 'mdb-react-ui-kit';
 
 const LocationList = () => {
     const [data, setData] = useState([]);
     const [value, setValue] = useState("");
     const [sortValue, setSortValue] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
+    const [pageLimit] = useState(4);
+    const [operation, setOperation] = useState("");
+
 
     const sortOptions = ["name", "street"];
     
     useEffect(() => {
-        loadLocationData();
+        loadLocationData(0, 4, 0);
     }, []);
 
-    const loadLocationData = async () => {
-        return await axios.get("https://donors-list.onrender.com/LocationData")
-                    .then((response) => setData(response.data))
+    const loadLocationData = async (start, end,  increase, optType=null) => {
+        switch (optType) {
+            case "search":
+                setOperation(optType);
+                setSortValue("");
+                return await axios
+                    .get(`https://donors-list.onrender.com/LocationData?q=${value}&_start=${start}&_end=${end}`)
+                    .then((response) => {
+                    setData(response.data);
+                    setValue("");
+            })
+            .catch((err) => console.log(err));
+            default:
+                return await axios.get(`https://donors-list.onrender.com/LocationData?_start=${start}&_end=${end}`)
+                    .then((response) => {
+                        setData(response.data);
+                        setCurrentPage(currentPage + increase)
+                    })
                     .catch((err) => console.log(err))
+        }
+        
     }
 
     const handleSearch = async (e) => {
         e.preventDefault();
+        loadLocationData(0, 4, 0, "search")
         return await axios
             .get(`https://donors-list.onrender.com/LocationData?q=${value}`)
             .then((resposnse) => {
@@ -41,8 +66,9 @@ const LocationList = () => {
     }
 
     const handleReset = () => {
-        loadLocationData();
+        loadLocationData(0, 4, 0, operation);
     };
+
 
     const handleSort = async (e) => {
         let value = e.target.value;
@@ -55,12 +81,60 @@ const LocationList = () => {
             .catch((err) => console.log(err));
     }
 
+    const renderPagination = () => {
+        if (currentPage === 0) {
+            return (
+                <MDBPagination className="mb-0">
+                    <MDBPaginationItem>
+                        <MDBPaginationLink>1</MDBPaginationLink>
+                    </MDBPaginationItem>
+                    <MDBPaginationItem>
+                        <MDBBtn onClick={() => loadLocationData(4, 8, 1, operation)}>
+                            Next
+                        </MDBBtn>
+                    </MDBPaginationItem>
+                </MDBPagination>
+            )
+        } else if (currentPage < pageLimit -1 && data.length === pageLimit) {
+            return (
+                <MDBPagination className="mb-0">
+                    <MDBPaginationItem>
+                        <MDBBtn onClick={() => loadLocationData((currentPage - 1) * 4, currentPage * 4, -1, operation)}>
+                            Prev
+                        </MDBBtn>
+                    </MDBPaginationItem>
+                    <MDBPaginationItem>
+                        <MDBPaginationLink>{currentPage + 1}</MDBPaginationLink>
+                    </MDBPaginationItem>
+                    <MDBPaginationItem>
+                        <MDBBtn onClick={() => loadLocationData((currentPage + 1) * 4, (currentPage + 2) * 4, 1, operation)}>
+                            Next
+                        </MDBBtn>
+                    </MDBPaginationItem>
+                </MDBPagination>
+            )
+        } else {
+            return (
+                <MDBPagination className="mb-0">
+                    <MDBPaginationItem>
+                        <MDBBtn onClick={() => loadLocationData((currentPage - 1) * 4, currentPage * 4, -1, operation)}>
+                            Prev
+                        </MDBBtn>
+                    </MDBPaginationItem>
+                    <MDBPaginationItem>
+                        <MDBPaginationLink>{currentPage + 1}</MDBPaginationLink>
+                    </MDBPaginationItem>
+                </MDBPagination>
+            )
+        }
+    }
+
   return (
     <MDBContainer>
         <form style={{
             margin: "auto",
             padding: "15px",
-            maxWidth: "400px",
+            maxWidth: "400px",  
             alignContent: "center"
         }}
         className="d-flex input-group w-auto"
@@ -69,7 +143,7 @@ const LocationList = () => {
             <input 
             type="text"
             className="form-control"
-            placeholder="Search Blood Group..."
+            placeholder="Search Location name..."
             value={value}
             onChange={(e) => setValue(e.target.value)}
             />
@@ -109,6 +183,16 @@ const LocationList = () => {
                 </MDBTable>
             </MDBCol>
         </MDBRow>
+        <div
+            style={{
+                margin: "auto",
+                padding: "15px",
+                maxWidth: "250px",  
+                alignContent: "center"
+            }}
+        >
+            {renderPagination()}
+        </div>
     </div>
     <MDBRow>
         <MDBCol size="8">
@@ -126,7 +210,6 @@ const LocationList = () => {
                 ))}
             </select>
         </MDBCol>
-        <MDBCol size="4">Filter By Status"</MDBCol>
     </MDBRow>
     </MDBContainer>
    
