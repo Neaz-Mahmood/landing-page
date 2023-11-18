@@ -17,7 +17,7 @@ const DonorList = () => {
 
     
   return (
-    <MDBContainer className="my-[100px]">
+    <MDBContainer id="donorList" className="my-[100px]">
         <div className="mt-[100px] flex justify-center">
         <h3 className="text-center">Donor List</h3>
         <MDBRow>

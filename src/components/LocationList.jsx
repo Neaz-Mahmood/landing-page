@@ -39,6 +39,7 @@ const LocationList = () => {
                     .get(`https://donors-list.onrender.com/LocationData?q=${value}&_start=${start}&_end=${end}`)
                     .then((response) => {
                     setData(response.data);
+                    setCurrentPage(currentPage + increase);
                     setValue("");
             })
             .catch((err) => console.log(err));
@@ -55,14 +56,7 @@ const LocationList = () => {
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        loadLocationData(0, 4, 0, "search")
-        return await axios
-            .get(`https://donors-list.onrender.com/LocationData?q=${value}`)
-            .then((resposnse) => {
-                setData(resposnse.data);
-                setValue("");
-            })
-            .catch((err) => console.log(err));
+        loadLocationData(0, 4, 0, "search");
     }
 
     const handleReset = () => {
@@ -130,7 +124,7 @@ const LocationList = () => {
     }
 
   return (
-    <MDBContainer>
+    <MDBContainer id="location">
         <form style={{
             margin: "auto",
             padding: "15px",

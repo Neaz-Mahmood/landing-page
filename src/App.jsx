@@ -1,6 +1,7 @@
-import React from 'react'
-import { Hero, LocationList, Header, Footer, Donor, DonorForm } from './components';
+import React, { lazy, Suspense } from 'react';
+import { Hero, LocationList, Header, Footer, DonorForm, Loading } from './components';
 import './App.css';
+const LazyDonor = lazy(() => import('./components/Donor'));
 
 function App () {
   return (
@@ -8,7 +9,9 @@ function App () {
       <Header />
       <Hero />
       <LocationList />
-      <Donor />
+      <Suspense fallback={<Loading />}>
+        <LazyDonor />
+      </Suspense>
       <DonorForm />
       <Footer />
     </div>

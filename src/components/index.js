@@ -5,6 +5,7 @@ import LocationList from './LocationList';
 import Footer from './Footer';
 import Donor from './Donor';
 import DonorForm from './DonorForm';
+import Loading from './Loading';
 
 export {Header};
 export {Hero};
@@ -13,3 +14,4 @@ export {Donor};
 export {LocationList};
 export {Footer};
 export {DonorForm};
+export {Loading};
