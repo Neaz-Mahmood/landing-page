@@ -30,7 +30,13 @@ const LocationList = () => {
         loadLocationData(0, 4, 0);
     }, []);
 
-    const loadLocationData = async (start, end,  increase, optType=null) => {
+    const loadLocationData = async (
+        start, 
+        end,  
+        increase, 
+        optType =   null, 
+        sortValue
+    ) => {
         switch (optType) {
             case "search":
                 setOperation(optType);
@@ -38,11 +44,21 @@ const LocationList = () => {
                 return await axios
                     .get(`https://donors-list.onrender.com/LocationData?q=${value}&_start=${start}&_end=${end}`)
                     .then((response) => {
-                    setData(response.data);
-                    setCurrentPage(currentPage + increase);
-                    setValue("");
-            })
-            .catch((err) => console.log(err));
+                        setData(response.data);
+                        setCurrentPage(currentPage + increase);
+                        setValue("");
+                    })
+                    .catch((err) => console.log(err));
+            case "sort":
+                setOperation(optType);
+                setSortValue(sortValue);
+                return await axios
+                    .get(`https://donors-list.onrender.com/LocationData?_sort=${sortValue}&_order=asc&_start=${start}&_end=${end}`)
+                    .then((response) => {
+                        setData(response.data);
+                        setCurrentPage(currentPage + increase);
+                    })
+                    .catch((err) => console.log(err));
             default:
                 return await axios.get(`https://donors-list.onrender.com/LocationData?_start=${start}&_end=${end}`)
                     .then((response) => {
@@ -56,26 +72,25 @@ const LocationList = () => {
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        loadLocationData(0, 4, 0, "search");
+        loadLocationData(0, 4, 0, "search", sortValue);
     }
 
     const handleReset = () => {
-        loadLocationData(0, 4, 0, operation);
+        setOperation("");
+        setValue("");
+        setSortValue("");
+        loadLocationData(0, 4, 0, operation, sortValue);
     };
 
 
     const handleSort = async (e) => {
         let value = e.target.value;
         setSortValue(value);
-        return await axios
-            .get(`https://donors-list.onrender.com/LocationData?_sort=${value}&_order=asc`)
-            .then((response) => {
-                setData(response.data);
-            })
-            .catch((err) => console.log(err));
+        loadLocationData(0, 4, 0, "sort", value);
     }
 
     const renderPagination = () => {
+        if (data.length < 4 && currentPage === 0) return null;
         if (currentPage === 0) {
             return (
                 <MDBPagination className="mb-0">
@@ -83,7 +98,7 @@ const LocationList = () => {
                         <MDBPaginationLink>1</MDBPaginationLink>
                     </MDBPaginationItem>
                     <MDBPaginationItem>
-                        <MDBBtn onClick={() => loadLocationData(4, 8, 1, operation)}>
+                        <MDBBtn onClick={() => loadLocationData(4, 8, 1, operation, sortValue)}>
                             Next
                         </MDBBtn>
                     </MDBPaginationItem>
@@ -93,7 +108,7 @@ const LocationList = () => {
             return (
                 <MDBPagination className="mb-0">
                     <MDBPaginationItem>
-                        <MDBBtn onClick={() => loadLocationData((currentPage - 1) * 4, currentPage * 4, -1, operation)}>
+                        <MDBBtn onClick={() => loadLocationData((currentPage - 1) * 4, currentPage * 4, -1, operation, sortValue)}>
                             Prev
                         </MDBBtn>
                     </MDBPaginationItem>
@@ -101,7 +116,7 @@ const LocationList = () => {
                         <MDBPaginationLink>{currentPage + 1}</MDBPaginationLink>
                     </MDBPaginationItem>
                     <MDBPaginationItem>
-                        <MDBBtn onClick={() => loadLocationData((currentPage + 1) * 4, (currentPage + 2) * 4, 1, operation)}>
+                        <MDBBtn onClick={() => loadLocationData((currentPage + 1) * 4, (currentPage + 2) * 4, 1, operation, sortValue)}>
                             Next
                         </MDBBtn>
                     </MDBPaginationItem>
@@ -111,7 +126,7 @@ const LocationList = () => {
             return (
                 <MDBPagination className="mb-0">
                     <MDBPaginationItem>
-                        <MDBBtn onClick={() => loadLocationData((currentPage - 1) * 4, currentPage * 4, -1, operation)}>
+                        <MDBBtn onClick={() => loadLocationData((currentPage - 1) * 4, currentPage * 4, -1, operation, sortValue)}>
                             Prev
                         </MDBBtn>
                     </MDBPaginationItem>
